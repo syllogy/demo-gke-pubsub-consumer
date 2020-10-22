@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gke-pubsub-consumer-config
+  namespace: default
+data:
+  GCP_PROJECT: 'andy-playground-264516'
+  PUBSUB_SUBSCRIPTION: 'demo-producer-subxx'
+  PUBSUB_TOPIC: 'demo-producer'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-gke-pubsub-consumer
+  namespace: default
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: gke-pubsub-consumer
+  template:
+    metadata:
+      labels:
+        app: gke-pubsub-consumer
+    spec:
+      containers:
+        - name: gke-pubsub-consumer-worker
+          imagePullPolicy: Always
+          image: "us.gcr.io/andy-playground-264516/gke-pubsub-consumer:latest"
+          ports:
+          - name: http
+            containerPort: 8080
+          resources:
+            limits:
+              cpu: 200m
+              memory: "200Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 120
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+          env:
+          - name: GCP_PROJECT
+            valueFrom:
+              configMapKeyRef:
+                name: gke-pubsub-consumer-config
+                key: GCP_PROJECT
+          - name: PUBSUB_SUBSCRIPTION
+            valueFrom:
+              configMapKeyRef:
+                name: gke-pubsub-consumer-config
+                key: PUBSUB_SUBSCRIPTION
+          - name: PUBSUB_TOPIC
+            valueFrom:
+              configMapKeyRef:
+                name: gke-pubsub-consumer-config
+                key: PUBSUB_TOPIC
