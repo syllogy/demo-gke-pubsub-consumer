@@ -9,7 +9,7 @@ It deploys to a GKE cluster
 - GKE Cluster (ensure the node pool has Cloud Pub/Sub enabled under security)    
 - Cloud PUB/SUB topic  
 - gcr.io repository  
-- service account running GKE nodes will need pub/sub permissions (Pub/Sub Publisher && Pub/Sub Subscriber)>  A good practice is to create a separate service account to run these workloads with only the permissions needed to run the GKE nodes, access pub/sub and to log messages and metrics. [Instructions](https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa)
+- service account running GKE nodes will need pub/sub permissions (Pub/Sub Publisher && Pub/Sub Subscriber).  A good practice is to create a separate service account to run these workloads with only the permissions needed to run the GKE nodes, access pub/sub and to log messages and metrics. [Instructions](https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa)
 - nodejs 14.7.0 for local development  
 - docker for local build  
 - kubectl for deploying
@@ -17,7 +17,7 @@ It deploys to a GKE cluster
 ## How to build and run locally
 ensure node 14.7.0 or later is installed  
 
-setup a gcp service account and credential json file (instructions: https://cloud.google.com/docs/authentication/getting-started)  
+setup a gcp service account and credential json file. [Instructions](https://cloud.google.com/docs/authentication/getting-started)  
 
 ```
 git clone https://github.com/doitintl/demo-gke-pubsub-consumer.git  
@@ -40,7 +40,7 @@ To exit, press CTRL+C
 
 # How to Deploy to GKE
 
-## 1. build docker
+## 1. Build docker container
 
 ```
 # login
@@ -57,7 +57,7 @@ docker build . -t us.gcr.io/andy-playground-264516/gke-pubsub-consumer:latest
 docker push us.gcr.io/andy-playground-264516/gke-pubsub-consumer:latest  
 ```
 
-## 2. deploy to GKE
+## 2. Deploy to GKE
 modify the ./kubernetes/deployment.yaml env vars for 
 - GCP_PROJECT  (your project)  
 - PUBSUB_SUBSCRIPTION (just add a new name for this, the process will create it if it is not there)  
@@ -76,7 +76,7 @@ kubectl apply -f ./kubernetes/deployment.yaml
 # verify pod is running
 kubectl get pods
 ```
-## 3. verify the consumer is working
+## 3. Verify the consumer is working
 Add some single messages into the PUB/SUB topic on the GCP console and then look at the pod logs   
 
 example:
